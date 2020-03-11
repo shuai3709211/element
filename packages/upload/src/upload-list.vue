@@ -1,5 +1,5 @@
 <template>
-  <transition-group
+  <div
     tag="ul"
     :class="[
       'el-upload-list',
@@ -60,7 +60,7 @@
         </span>
       </slot>
     </li>
-  </transition-group>
+  </div>
 </template>
 <script>
   import Locale from 'element-ui/src/mixins/locale';
