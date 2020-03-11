@@ -1,6 +1,6 @@
 {
-  "name": "element-ui",
-  "version": "2.13.0",
+  "name": "shuai-element-ui",
+  "version": "1.0.5",
   "description": "A Component Library for Vue.js.",
   "main": "lib/element-ui.common.js",
   "files": [
@@ -144,5 +144,10 @@
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.11",
     "webpack-node-externals": "^1.7.2"
-  }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 9"
+  ]
 }
