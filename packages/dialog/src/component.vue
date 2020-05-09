@@ -65,7 +65,7 @@
 
       appendToBody: {
         type: Boolean,
-        default: false
+        default: true
       },
 
       lockScroll: {
