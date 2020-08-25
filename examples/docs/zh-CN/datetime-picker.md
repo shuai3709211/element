@@ -16,6 +16,14 @@ DateTimePicker 由 DatePicker 和 TimePicker 派生，`Picker Options` 或者其
     <el-date-picker
       v-model="value1"
       type="datetime"
+      :isShowSelect="true"
+    format="yyyy-MM-dd HH:mm"
+:time-picker-options="{
+    start: '00:30',
+    step: '00:15',
+    end: '18:30'
+  }"
+      @change="change"
       placeholder="选择日期时间">
     </el-date-picker>
   </div>
@@ -70,6 +78,11 @@ DateTimePicker 由 DatePicker 和 TimePicker 派生，`Picker Options` 或者其
         value2: '',
         value3: ''
       };
+    },
+    methods:{
+        change(v){
+            console.log(v)
+        }
     }
   };
 </script>

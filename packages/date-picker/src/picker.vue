@@ -388,6 +388,16 @@ export default {
     validateEvent: {
       type: Boolean,
       default: true
+    },
+    isShowSelect: {
+      type: Boolean,
+      default: false
+    },
+    timePickerOptions: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
 
@@ -831,6 +841,8 @@ export default {
       this.picker.selectionMode = this.selectionMode;
       this.picker.unlinkPanels = this.unlinkPanels;
       this.picker.arrowControl = this.arrowControl || this.timeArrowControl || false;
+      this.picker.isShowSelect = this.isShowSelect || false;
+      if (this.isShowSelect) this.picker.timePickerOptions = this.timePickerOptions || {};
       this.$watch('format', (format) => {
         this.picker.format = format;
       });

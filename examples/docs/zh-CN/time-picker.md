@@ -22,7 +22,7 @@
   export default {
     data() {
       return {
-        value: ''
+        value: '08:30:00'
       };
     }
   }
@@ -100,7 +100,7 @@
     data() {
       return {
         startTime: '',
-        endTime: ''
+        endTime: '08:30:00'
       };
     }
   }

@@ -28,21 +28,43 @@
                 @change="handleVisibleDateChange" />
             </span>
             <span class="el-date-picker__editor-wrap" v-clickoutside="handleTimePickClose">
-              <el-input
-                ref="input"
-                @focus="timePickerVisible = true"
-                :placeholder="t('el.datepicker.selectTime')"
-                :value="visibleTime"
-                size="small"
-                @input="val => userInputTime = val"
-                @change="handleVisibleTimeChange" />
-              <time-picker
-                ref="timepicker"
-                :time-arrow-control="arrowControl"
-                @pick="handleTimePick"
-                :visible="timePickerVisible"
-                @mounted="proxyTimePickerDataProperties">
-              </time-picker>
+              <template v-if="isShowSelect">
+                <el-input
+                   ref="input"
+                   @focus="timePickerVisible = true"
+                   :placeholder="t('el.datepicker.selectTime')"
+                   :value="visibleSelectTime"
+                   size="small"
+                   @input="val => userInputTime = val"
+                   @change="handleVisibleTimeChange" />
+                <date-time-select
+                    :visible="timePickerVisible"
+                    :value="userInputTime"
+                    :pickerOptions="timePickerOptions"
+                    @change="dateTimeSelectChange"
+                >
+                </date-time-select>
+              </template>
+              <template v-else>
+                 <el-input
+                     ref="input"
+                     @focus="timePickerVisible = true"
+                     :placeholder="t('el.datepicker.selectTime')"
+                     :value="visibleTime"
+                     size="small"
+                     @input="val => userInputTime = val"
+                     @change="handleVisibleTimeChange" />
+
+                  <time-picker
+                      ref="timepicker"
+                      :time-arrow-control="arrowControl"
+                      @pick="handleTimePick"
+                      :visible="timePickerVisible"
+                      @mounted="proxyTimePickerDataProperties">
+                  </time-picker>
+
+              </template>
+             
             </span>
           </div>
           <div
@@ -127,7 +149,7 @@
           type="text"
           class="el-picker-panel__link-btn"
           @click="changeToNow"
-          v-show="selectionMode !== 'dates'">
+          v-show="selectionMode !== 'dates' && !isShowSelect">
           {{ t('el.datepicker.now') }}
         </el-button>
         <el-button
@@ -167,6 +189,7 @@
   import ElInput from 'element-ui/packages/input';
   import ElButton from 'element-ui/packages/button';
   import TimePicker from './time';
+  import DateTimeSelect from './date-time-select';
   import YearTable from '../basic/year-table';
   import MonthTable from '../basic/month-table';
   import DateTable from '../basic/date-table';
@@ -179,7 +202,7 @@
     watch: {
       showTime(val) {
         /* istanbul ignore if */
-        if (!val) return;
+        if (!val || this.isShowSelect) return;
         this.$nextTick(_ => {
           const inputElm = this.$refs.input.$el;
           if (inputElm) {
@@ -204,7 +227,7 @@
       },
 
       timePickerVisible(val) {
-        if (val) this.$nextTick(() => this.$refs.timepicker.adjustSpinners());
+        if (val && !this.isShowSelect) this.$nextTick(() => this.$refs.timepicker.adjustSpinners());
       },
 
       selectionMode(newVal) {
@@ -496,11 +519,19 @@
         return this.selectableRange.length > 0
           ? timeWithinRange(date, this.selectableRange, this.format || 'HH:mm:ss')
           : true;
+      },
+      dateTimeSelectChange(time) {
+        this.userInputTime = time;
+        console.log(time);
+        console.log(this.date);
+        let date = new Date(this.date);
+        this.date = new Date(formatDate(date, 'yyyy-MM-dd') + ' ' + time);
+        this.emit(this.date, true);
       }
     },
 
     components: {
-      TimePicker, YearTable, MonthTable, DateTable, ElInput, ElButton
+      TimePicker, YearTable, MonthTable, DateTable, ElInput, ElButton, DateTimeSelect
     },
 
     data() {
@@ -524,7 +555,12 @@
         format: '',
         arrowControl: false,
         userInputDate: null,
-        userInputTime: null
+        userInputTime: null,
+        start: null,
+        step: null,
+        end: null,
+        isShowSelect: false,
+        timePickerOptions: {}
       };
     },
 
@@ -556,7 +592,14 @@
           return formatDate(this.value || this.defaultValue, this.timeFormat);
         }
       },
-
+      visibleSelectTime() {
+        if (this.userInputTime !== null) {
+          return this.userInputTime;
+        } else {
+          this.userInputTime = formatDate(this.value || this.defaultValue, 'HH:mm');
+          return formatDate(this.value || this.defaultValue, this.timeFormat);
+        }
+      },
       visibleDate() {
         if (this.userInputDate !== null) {
           return this.userInputDate;
